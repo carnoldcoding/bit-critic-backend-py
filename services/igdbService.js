@@ -1,22 +1,16 @@
-import { headersConfig } from "../config.js"
-
+const configs = require("../config.js");
 const axios = require('axios');
 
 const fetchGenreData = async () => {
-    axios({ 
+    return axios({
         url: "https://api.igdb.com/v4/genres",
         method: 'POST',
-        headers: headersConfig,
-        data: "limit 100; fields *;"
+        headers: configs.igdbHeaders,
+        data: "limit 50; fields *;"
     })
-    .then(response =>{
-        const genres = response.data.map(genre =>({
-            id: genre.id,
-            name: genre.name,
-            updated_at: genre.updated_at
-        }))
-        console.log(genres);
+    .then(response => {
+        return (response.data);
     }).catch(err => console.error("Error fetching data from IGDB API: ", err));
 };
 
-export {fetchGenreData}
+module.exports = { fetchGenreData }
