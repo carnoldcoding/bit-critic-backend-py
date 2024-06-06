@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const { dbClient } = require('../config.js');
 const GenreModel = require("../models/genre");
+const GameModel = require('../models/game');
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -20,27 +21,28 @@ const testConnection = async () => {
     }
 }
 
-const dropTable = async (table) => {
+const dropTables = async (tableArray) => {
     try {
-        await table.drop();
-        console.log('Genre table has been dropped successfully.');
+        for (const table of tableArray){
+            await table.drop();
+            console.log(`${table} table has been dropped successfully.`);
+        }
     } catch (error) {
         console.error('Error dropping genre table:', error);
     }
 }
 
-
-//Test Connection
-testConnection();
+const dbSync = async () => {
+    await sequelize.sync();
+}
 
 // Define models
 const Genre = GenreModel(sequelize);
+const Game = GameModel(sequelize);
 
-dropTable(Genre);
-
-// Sync models with the database (optional)
-sequelize.sync();
+dbSync();
 
 module.exports = {
-    Genre
+    Genre,
+    Game
 };

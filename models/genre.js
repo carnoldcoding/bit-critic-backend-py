@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    return sequelize.define('Genre', {
+    return sequelize.define('genre', {
         id: {
             type: DataTypes.INTEGER,
             unique: true,
@@ -20,5 +20,9 @@ module.exports = (sequelize) => {
             type: DataTypes.DATE,
             allowNull: false
         }
-    });
+    },
+        {
+            freezeTableName: true,
+        }
+    );
 };
