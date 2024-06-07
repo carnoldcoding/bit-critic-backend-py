@@ -2,6 +2,7 @@ const { Sequelize } = require('sequelize');
 const { dbClient } = require('../config.js');
 const GenreModel = require("../models/genre");
 const GameModel = require('../models/game');
+const ArtworkModel = require('../models/artwork.js');
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -57,6 +58,7 @@ const dbSync = async () => {
 // Define models
 const Genre = GenreModel(sequelize);
 const Game = GameModel(sequelize);
+const Artwork = ArtworkModel(sequelize);
 
 //Define associations
 Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'gameId', onDelete: 'cascade' });
@@ -65,6 +67,7 @@ Genre.belongsToMany(Game, { through: 'game_to_genre', foreignKey: 'genreId', onD
 module.exports = {
     Genre,
     Game,
+    Artwork,
     dbReset,
     dbSync,
     sequelize

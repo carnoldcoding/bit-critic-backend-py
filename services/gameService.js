@@ -9,7 +9,7 @@ const fetchGameData = async () => {
             url: "https://api.igdb.com/v4/games",
             method: 'POST',
             headers: configs.igdbHeaders,
-            data: "limit 200; fields *; where category = 0 & cover != null & platforms = (4, 5, 6, 7, 8, 9, 11, 12, 18, 19, 20, 21, 22, 23, 24, 33, 37, 38, 41, 46, 48, 49);"
+            data: "limit 500; fields *; where category = 0 & cover != null & platforms = (4, 5, 6, 7, 8, 9, 11, 12, 18, 19, 20, 21, 22, 23, 24, 33, 37, 38, 41, 46, 48, 49);"
         });
 
         const data = response.data;
@@ -50,7 +50,7 @@ const syncGamesWithDatabase = async () => {
     try {
         await sequelize.transaction(async (transaction) => {
             for (const gameData of games) {
-                const { genres, ...gameFields } = gameData;
+                const { genres, ...gameFields } = gameData; 
 
                 // Upsert game
                 const [game] = await Game.upsert(gameFields, { transaction });
