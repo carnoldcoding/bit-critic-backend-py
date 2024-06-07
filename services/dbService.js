@@ -9,8 +9,12 @@ const sequelize = new Sequelize(
     dbClient.user,
     dbClient.password, {
     host: dbClient.host,
-    dialect: dbClient.client
-});
+    dialect: dbClient.client,
+    define: {
+        freezeTableName: true
+    }
+    },
+);
 
 const testConnection = async () => {
     try {
@@ -21,7 +25,7 @@ const testConnection = async () => {
     }
 }
 
-const dropTables = async (tableArray) => {
+const dropTables = async (...tableArray) => {
     try {
         for (const table of tableArray){
             await table.drop();
@@ -32,17 +36,36 @@ const dropTables = async (tableArray) => {
     }
 }
 
+const dbReset = async () => {
+    try {
+        await sequelize.drop();
+        console.log("Database Destroyed");
+    } catch (error) {
+        console.log("Database destruction failed\n", error)
+    }
+}
+
 const dbSync = async () => {
-    await sequelize.sync();
+    try {
+        await sequelize.sync();
+        console.log("Database synced properly");
+    } catch (error) {
+        console.error("Synchronization error: ", error);
+    }
 }
 
 // Define models
 const Genre = GenreModel(sequelize);
 const Game = GameModel(sequelize);
 
-dbSync();
+//Define associations
+Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'gameId', onDelete: 'cascade' });
+Genre.belongsToMany(Game, { through: 'game_to_genre', foreignKey: 'genreId', onDelete: 'cascade'});
 
 module.exports = {
     Genre,
-    Game
+    Game,
+    dbReset,
+    dbSync,
+    sequelize
 };

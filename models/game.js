@@ -49,9 +49,5 @@ module.exports = (sequelize) => {
         external_rating_count: {
             type: DataTypes.INTEGER
         }
-    },
-        {
-            freezeTableName: true,
-        }
-    );
+    });
 };

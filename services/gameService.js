@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { Game } = require('./dbService');
+const { Game, Genre, sequelize } = require('./dbService');
 const configs = require("../config");
 
 //Fetch Genres from IGDB
@@ -28,7 +28,8 @@ const fetchGameData = async () => {
             external_rating: game.aggregated_rating,
             external_rating_count: game.aggregated_rating_count,
             igdb_rating: game.rating,
-            igdb_rating_count: game.rating_count
+            igdb_rating_count: game.rating_count,
+            genres: game.genres
         }))
         return parsedData;
     } catch (err) {
@@ -47,14 +48,29 @@ const syncGamesWithDatabase = async () => {
     }
 
     try {
-        //Update Database
-        await Game.bulkCreate(games, {
-            updateOnDuplicate: ['name']
+        await sequelize.transaction(async (transaction) => {
+            for (const gameData of games) {
+                const { genres, ...gameFields } = gameData;
+
+                // Upsert game
+                const [game] = await Game.upsert(gameFields, { transaction });
+
+                if (genres && genres.length > 0) {
+                    // Upsert genres and create associations
+                    for (const genreId of genres) {
+                        const [genre] = await Genre.findOrCreate({
+                            where: { id: genreId },
+                            defaults: { id: genreId },
+                            transaction
+                        });
+                        await game.addGenre(genre, { transaction });
+                    }
+                }
+            }
         });
-        console.log('Games successfully synced with the database.');
+        console.log('Games and genres successfully synced with the database.');
     } catch (error) {
-        //Report Error
-        console.error("Error syncing games with the database: ", error);
+        console.error("Error syncing games and genres with the database: ", error);
     }
 }
 

@@ -50,5 +50,4 @@ const syncGenresWithDatabase = async () => {
 }
 
 //Reveal Sync Method
-
 module.exports = {syncGenresWithDatabase}
