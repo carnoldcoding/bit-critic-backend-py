@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { Game, Genre, sequelize } = require('./dbService');
+const { Game, Genre, Expansion, sequelize } = require('./dbService');
 const configs = require("../config");
 
 //Fetch Genres from IGDB
@@ -9,7 +9,7 @@ const fetchGameData = async () => {
             url: "https://api.igdb.com/v4/games",
             method: 'POST',
             headers: configs.igdbHeaders,
-            data: "limit 500; fields *; where category = 0 & cover != null & platforms = (4, 5, 6, 7, 8, 9, 11, 12, 18, 19, 20, 21, 22, 23, 24, 33, 37, 38, 41, 46, 48, 49);"
+            data: "limit 500; fields *; where category = (0, 2) & cover != null & platforms = (4, 5, 6, 7, 8, 9, 11, 12, 18, 19, 20, 21, 22, 23, 24, 33, 37, 38, 41, 46, 48, 49);"
         });
 
         const data = response.data;
@@ -29,7 +29,8 @@ const fetchGameData = async () => {
             external_rating_count: game.aggregated_rating_count,
             igdb_rating: game.rating,
             igdb_rating_count: game.rating_count,
-            genres: game.genres
+            genres: game.genres,
+            expansions: game.expansions
         }))
         return parsedData;
     } catch (err) {
@@ -50,7 +51,7 @@ const syncGamesWithDatabase = async () => {
     try {
         await sequelize.transaction(async (transaction) => {
             for (const gameData of games) {
-                const { genres, ...gameFields } = gameData; 
+                const { genres, expansions, ...gameFields } = gameData; 
 
                 // Upsert game
                 const [game] = await Game.upsert(gameFields, { transaction });
@@ -66,11 +67,21 @@ const syncGamesWithDatabase = async () => {
                         await game.addGenre(genre, { transaction });
                     }
                 }
+                if (expansions && expansions.length > 0) {
+                    // Handle one-to-many relationship between game and expansions
+                    for (const expansionId of expansions) {
+                        await Expansion.findOrCreate({
+                            where: { id: expansionId },
+                            defaults: { id: expansionId, game_id: game.id },
+                            transaction
+                        });
+                    }
+                }
             }
         });
-        console.log('Games and genres successfully synced with the database.');
+        console.log('Games, genres, and expansions successfully synced with the database.');
     } catch (error) {
-        console.error("Error syncing games and genres with the database: ", error);
+        console.error("Error syncing Games, genres, and expansions with the database: ", error);
     }
 }
 

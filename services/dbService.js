@@ -4,6 +4,7 @@ const GenreModel = require("../models/genre");
 const GameModel = require('../models/game');
 const ArtworkModel = require('../models/artwork.js');
 const CoverModel = require('../models/cover.js');
+const ExpansionModel = require('../models/expansion.js');
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -61,14 +62,19 @@ const Genre = GenreModel(sequelize);
 const Game = GameModel(sequelize);
 const Artwork = ArtworkModel(sequelize);
 const Cover = CoverModel(sequelize);
+const Expansion = ExpansionModel(sequelize);
 
 //Define associations
 Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'gameId', onDelete: 'cascade' });
 Genre.belongsToMany(Game, { through: 'game_to_genre', foreignKey: 'genreId', onDelete: 'cascade'});
 
+Game.hasMany(Expansion, { foreignKey: 'game_id', onDelete: 'cascade' });
+Expansion.belongsTo(Game, { foreignKey: 'game_id' });
+
 module.exports = {
     Genre,
     Game,
+    Expansion,
     Artwork,
     Cover,
     dbReset,

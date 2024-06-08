@@ -14,7 +14,7 @@ const PORT = 3000;
 app.get('/sync-genres', genreController.syncGenres);
 app.get('/sync-games', gameController.syncGames);
 app.get('/sync-artwork', artworkController.syncArtwork);
-app.get('/sync-cover', coverController.syncCover);
+app.get('/sync-covers', coverController.syncCover);
 
 //Database Debugging
 app.get('/sync-db', dbController.syncDatabase);
