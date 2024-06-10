@@ -48,6 +48,9 @@ module.exports = (sequelize) => {
         },
         external_rating_count: {
             type: DataTypes.INTEGER
+        },
+        franchise_id: {
+            type: DataTypes.INTEGER
         }
     });
 };
