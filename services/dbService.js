@@ -6,6 +6,7 @@ const ArtworkModel = require('../models/artwork.js');
 const CoverModel = require('../models/cover.js');
 const ExpansionModel = require('../models/expansion.js');
 const FranchiseModel = require('../models/franchise.js');
+const GameToCompanyModel = require('../models/gameToCompany.js');
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -65,6 +66,7 @@ const Artwork = ArtworkModel(sequelize);
 const Cover = CoverModel(sequelize);
 const Expansion = ExpansionModel(sequelize);
 const Franchise = FranchiseModel(sequelize);
+const GameToCompany = GameToCompanyModel(sequelize);
 
 //Define associations/relations
 Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'gameId', onDelete: 'cascade' });
@@ -80,6 +82,7 @@ module.exports = {
     Artwork,
     Cover,
     Franchise,
+    GameToCompany,
     dbReset,
     dbSync,
     sequelize

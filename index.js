@@ -6,6 +6,7 @@ const dbController = require('./controllers/dbController');
 const artworkController = require('./controllers/artworkController');
 const coverController = require('./controllers/coverController');
 const franchiseController = require('./controllers/franchiseController');
+const gameToCompanyController = require('./controllers/gameToCompanyController');
 
 const app = express();
 const PORT = 3000;
@@ -55,6 +56,15 @@ app.get('/sync-franchises', async () => {
   }
 });
 
+app.get('/sync-game-to-company', async (req, res) => {
+  try {
+    await gameToCompanyController.syncGameToCompany();
+    res.status(200).send("Game To Company table successfully synced to database");
+  } catch (error) {
+    res.status(500).send("Game To Company table failed to sync to database");
+  }
+})
+
 //Database Debugging
 app.get('/sync-db', dbController.syncDatabase);
 app.get('/reset-db', dbController.resetDatabase);
@@ -65,6 +75,7 @@ app.get('/sync-all', async (req, res) => {
     await artworkController.syncArtwork();
     await coverController.syncCover();
     await franchiseController.syncFranchises();
+    await gameToCompanyController.syncGameToCompany();
     res.status(200).send('All data synchronized successfully.');
   } catch (error) {
     console.error('Error synchronizing all data:', error);

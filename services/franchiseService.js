@@ -18,7 +18,7 @@ const fetchFranchiseData = async () => {
             id: franchise.id,
             name: franchise.name,
             slug: franchise.slug,
-            updated_at: franchise.updated_at
+            url: franchise.url
         }))
 
         return parsedData;
