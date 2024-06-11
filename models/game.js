@@ -51,6 +51,9 @@ module.exports = (sequelize) => {
         },
         franchise_id: {
             type: DataTypes.INTEGER
+        },
+        parent_game_id: {
+            type: DataTypes.INTEGER
         }
     });
 };

@@ -31,7 +31,8 @@ const fetchGameData = async () => {
             igdb_rating_count: game.rating_count,
             genres: game.genres,
             expansions: game.expansions,
-            franchise_id: game.franchise
+            franchise_id: game.franchise,
+            parent_game_id: game.parent_game
         }))
         return parsedData;
     } catch (err) {

@@ -7,6 +7,7 @@ const CoverModel = require('../models/cover.js');
 const ExpansionModel = require('../models/expansion.js');
 const FranchiseModel = require('../models/franchise.js');
 const GameToCompanyModel = require('../models/gameToCompany.js');
+const CompanyModel = require('../models/company.js');
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -15,6 +16,7 @@ const sequelize = new Sequelize(
     dbClient.password, {
     host: dbClient.host,
     dialect: dbClient.client,
+    logging: false,
     define: {
         freezeTableName: true
     }
@@ -67,10 +69,11 @@ const Cover = CoverModel(sequelize);
 const Expansion = ExpansionModel(sequelize);
 const Franchise = FranchiseModel(sequelize);
 const GameToCompany = GameToCompanyModel(sequelize);
+const Company = CompanyModel(sequelize);
 
 //Define associations/relations
-Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'gameId', onDelete: 'cascade' });
-Genre.belongsToMany(Game, { through: 'game_to_genre', foreignKey: 'genreId', onDelete: 'cascade'});
+Game.belongsToMany(Genre, { through: 'game_to_genre', foreignKey: 'game_id', onDelete: 'cascade' });
+Genre.belongsToMany(Game, { through: 'game_to_genre', foreignKey: 'genre_id', onDelete: 'cascade'});
 
 Game.hasMany(Expansion, { foreignKey: 'game_id', onDelete: 'cascade' });
 Expansion.belongsTo(Game, { foreignKey: 'game_id', onDelete: 'cascade' });
@@ -83,6 +86,7 @@ module.exports = {
     Cover,
     Franchise,
     GameToCompany,
+    Company,
     dbReset,
     dbSync,
     sequelize
