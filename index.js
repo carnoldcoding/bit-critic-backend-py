@@ -8,6 +8,7 @@ const coverController = require('./controllers/coverController');
 const franchiseController = require('./controllers/franchiseController');
 const gameToCompanyController = require('./controllers/gameToCompanyController');
 const companyController = require('./controllers/companyController');
+const companyLogoController = require("./controllers/companyLogoController");
 
 const app = express();
 const PORT = 3000;
@@ -76,6 +77,15 @@ app.get('/sync-companies', async (req, res) => {
   }
 })
 
+app.get('/sync-company-logos', async (req, res) => {
+  try {
+    await companyLogoController.syncCompanyLogos();
+    res.status(200).send("Company logos have been synced");
+  } catch (error) {
+    res.status(500).send("Company logos failed to sync");
+  }
+})
+
 //Database Debugging
 app.get('/sync-db', dbController.syncDatabase);
 app.get('/reset-db', dbController.resetDatabase);
@@ -88,6 +98,7 @@ app.get('/sync-all', async (req, res) => {
     await franchiseController.syncFranchises();
     await companyController.syncCompanies();
     await gameToCompanyController.syncGameToCompany();
+    await companyLogoController.syncCompanyLogos();
     res.status(200).send('All data synchronized successfully.');
   } catch (error) {
     console.error('Error synchronizing all data:', error);
